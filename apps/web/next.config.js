@@ -9,7 +9,12 @@ const nextConfig = {
     },
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', '@taskflow/ui'],
+    optimizePackageImports: ['lucide-react', '@taskflow/ui', 'date-fns'],
+  },
+  modularizeImports: {
+    'date-fns': {
+      transform: 'date-fns/{{member}}',
+    },
   },
   images: {
     remotePatterns: [

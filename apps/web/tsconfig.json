@@ -1,0 +1,18 @@
+{
+  "extends": "@taskflow/config/typescript/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@taskflow/ui": ["../../packages/ui/src"],
+      "@taskflow/shared": ["../../packages/shared/src"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

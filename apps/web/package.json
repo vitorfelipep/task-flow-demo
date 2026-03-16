@@ -1,0 +1,40 @@
+{
+  "name": "@taskflow/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TaskFlow Web Application",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
+    "@taskflow/shared": "*",
+    "@taskflow/ui": "*",
+    "date-fns": "^3.3.0",
+    "lucide-react": "^0.316.0",
+    "next": "14.1.0",
+    "next-themes": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.50.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@taskflow/config": "*",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.1.0",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.3.0"
+  }
+}

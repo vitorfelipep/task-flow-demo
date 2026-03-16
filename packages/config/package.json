@@ -1,0 +1,10 @@
+{
+  "name": "@taskflow/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared configuration files for TaskFlow",
+  "files": [
+    "eslint",
+    "typescript"
+  ]
+}

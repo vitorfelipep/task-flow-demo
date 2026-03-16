@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@taskflow/ui', '@taskflow/shared'],
   swcMinify: true,
+  poweredByHeader: false,
   compiler: {
     removeConsole: {
       exclude: ['error', 'warn'],

@@ -2,6 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@taskflow/ui', '@taskflow/shared'],
+  swcMinify: true,
+  compiler: {
+    removeConsole: {
+      exclude: ['error', 'warn'],
+    },
+  },
   experimental: {
     optimizePackageImports: ['lucide-react', '@taskflow/ui'],
   },

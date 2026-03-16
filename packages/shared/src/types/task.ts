@@ -38,29 +38,6 @@ export interface Task {
   completedAt?: Date;
 }
 
-export interface CreateTaskInput {
-  title: string;
-  description?: string;
-  priority?: Priority;
-  dueDate?: string;
-  dueTime?: string;
-  projectId?: string;
-  labelIds?: string[];
-}
-
-export interface UpdateTaskInput extends Partial<CreateTaskInput> {
-  status?: TaskStatus;
-  order?: number;
-}
-
-export interface TaskFilters {
-  status?: TaskStatus;
-  priority?: Priority;
-  projectId?: string;
-  labelId?: string;
-  dueDateFrom?: string;
-  dueDateTo?: string;
-  search?: string;
-}
-
 export type TaskView = 'today' | 'upcoming' | 'inbox' | 'completed' | 'project' | 'label';
+
+// CreateTaskInput, UpdateTaskInput, and TaskFilters are exported from validations/task.ts

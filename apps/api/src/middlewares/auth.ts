@@ -47,7 +47,8 @@ export function authenticate(
 }
 
 export function generateToken(payload: AuthPayload): string {
+  // @ts-expect-error - expiresIn type mismatch with @types/jsonwebtoken
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    expiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
   });
 }

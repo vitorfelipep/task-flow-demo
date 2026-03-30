@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,8 +14,20 @@ import { toast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Show toast if redirected due to expired session
+  useEffect(() => {
+    if (searchParams.get('expired') === 'true') {
+      toast({
+        variant: 'destructive',
+        title: 'Sessão Expirada',
+        description: 'Sua sessão expirou. Por favor, faça login novamente.',
+      });
+    }
+  }, [searchParams]);
 
   const {
     register,

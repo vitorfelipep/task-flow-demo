@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { AuthErrorListener } from '@/components/providers/auth-error-listener';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 
@@ -30,6 +31,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <AuthErrorListener />
           <Toaster />
         </ThemeProvider>
       </body>

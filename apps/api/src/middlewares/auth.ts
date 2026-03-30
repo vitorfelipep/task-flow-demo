@@ -31,15 +31,19 @@ export function authenticate(
 
     const token = authHeader.substring(7);
     
+    if (!token || token.trim() === '') {
+      throw new AppError(401, 'UNAUTHORIZED', 'Token não fornecido');
+    }
+    
     const payload = jwt.verify(token, JWT_SECRET) as AuthPayload;
     req.user = payload;
     
     next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      next(new AppError(401, 'INVALID_TOKEN', 'Token inválido'));
-    } else if (error instanceof jwt.TokenExpiredError) {
-      next(new AppError(401, 'TOKEN_EXPIRED', 'Token expirado'));
+    if (error instanceof jwt.TokenExpiredError) {
+      next(new AppError(401, 'TOKEN_EXPIRED', 'Token expirado. Por favor, faça login novamente.'));
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      next(new AppError(401, 'INVALID_TOKEN', 'Token inválido. Por favor, faça login novamente.'));
     } else {
       next(error);
     }

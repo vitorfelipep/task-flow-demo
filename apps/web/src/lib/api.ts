@@ -8,6 +8,33 @@ type RequestOptions = {
   token?: string;
 };
 
+// Helper function to handle auth errors
+function handleAuthError(errorCode?: string, errorMessage?: string) {
+  if (errorCode === 'INVALID_TOKEN' || errorCode === 'TOKEN_EXPIRED' || errorCode === 'UNAUTHORIZED') {
+    // Clear localStorage
+    localStorage.removeItem('taskflow-auth');
+    
+    // Show notification (only if toast is available)
+    if (typeof window !== 'undefined') {
+      // Try to use toast if available
+      try {
+        // Create a custom event to notify about the error
+        const event = new CustomEvent('auth:session-expired', {
+          detail: { message: errorMessage || 'Sessão expirada. Faça login novamente.' }
+        });
+        window.dispatchEvent(event);
+      } catch (e) {
+        console.warn('Could not dispatch auth error event:', e);
+      }
+      
+      // Redirect to login after a small delay to allow toast to show
+      setTimeout(() => {
+        window.location.href = '/login?expired=true';
+      }, 100);
+    }
+  }
+}
+
 export async function apiClient<T>(
   endpoint: string,
   options: RequestOptions = {}
@@ -33,12 +60,19 @@ export async function apiClient<T>(
     const data = await response.json();
 
     if (!response.ok) {
+      const error = data.error || {
+        code: 'REQUEST_FAILED',
+        message: 'Erro na requisição',
+      };
+
+      // Handle authentication errors
+      if (response.status === 401) {
+        handleAuthError(error.code, error.message);
+      }
+
       return {
         success: false,
-        error: data.error || {
-          code: 'REQUEST_FAILED',
-          message: 'Erro na requisição',
-        },
+        error,
       };
     }
 

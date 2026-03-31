@@ -22,7 +22,7 @@ import { toast } from '@/hooks/use-toast';
 
 export function AddTaskButton() {
   const token = useAuthStore((s) => s.token);
-  const { projects, addTask } = useTasksStore();
+  const { projects, addTask, setTasks } = useTasksStore();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,7 +50,15 @@ export function AddTaskButton() {
       const response = await tasksApi.create(token, data);
       
       if (response.success && response.data) {
+        // Add task to local state
         addTask(response.data as any);
+        
+        // Reload all tasks from server to ensure consistency
+        const tasksResponse = await tasksApi.today(token);
+        if (tasksResponse.success && tasksResponse.data) {
+          setTasks(tasksResponse.data as any[]);
+        }
+        
         toast({
           title: 'Tarefa criada!',
           description: data.title,
@@ -64,7 +72,8 @@ export function AddTaskButton() {
           description: response.error?.message || 'Erro ao criar tarefa',
         });
       }
-    } catch {
+    } catch (error) {
+      console.error('Error creating task:', error);
       toast({
         variant: 'destructive',
         title: 'Erro',

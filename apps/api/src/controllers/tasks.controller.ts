@@ -297,14 +297,19 @@ export class TasksController {
         },
       });
 
-      res.status(201).json({
+      console.log('[TasksController.create] Task created successfully:', task.id);
+
+      const response = {
         success: true,
         data: {
           ...task,
           labels: task.labels.map((tl) => tl.label),
         },
-      });
+      };
+
+      res.status(201).json(response);
     } catch (error) {
+      console.error('[TasksController.create] Error:', error);
       next(error);
     }
   }
@@ -486,6 +491,10 @@ export class TasksController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+}
+error);
     }
   }
 }

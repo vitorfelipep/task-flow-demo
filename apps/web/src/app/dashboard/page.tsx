@@ -13,6 +13,7 @@ import { toast } from '@/hooks/use-toast';
 import type { Task, Project, Label } from '@taskflow/shared';
 
 export default function DashboardPage() {
+  const [reloadVersion, setReloadVersion] = useState(0);
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
   const { 
@@ -37,6 +38,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!token) return;
 
+    let cancelled = false;
+
     const loadData = async () => {
       setLoading(true);
       try {
@@ -46,6 +49,9 @@ export default function DashboardPage() {
           labelsApi.list(token),
         ]);
 
+        if (cancelled) return;
+
+        if (!tasksRes.success) throw new Error(tasksRes.error?.message);
         if (tasksRes.success) {
           setTasks((tasksRes.data as Task[]) || []);
         }
@@ -56,18 +62,22 @@ export default function DashboardPage() {
           setLabels((labelsRes.data as Label[]) || []);
         }
       } catch {
+        if (cancelled) return;
         toast({
           variant: 'destructive',
           title: 'Erro',
           description: 'Erro ao carregar dados',
         });
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     loadData();
-  }, [token, setTasks, setProjects, setLabels, setLoading]);
+    return () => {
+      cancelled = true;
+    };
+  }, [token, setTasks, setProjects, setLabels, setLoading, reloadVersion]);
 
   const viewConfig = {
     today: {
@@ -132,7 +142,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Add Task Button */}
-      <AddTaskButton />
+      <AddTaskButton onTaskCreated={() => setReloadVersion((version) => version + 1)} />
 
       {/* Task List */}
       <div className="mt-6">

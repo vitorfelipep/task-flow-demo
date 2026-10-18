@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Calendar, Flag, X, Loader2 } from 'lucide-react';
+import { Plus, Calendar, Flag, Loader2 } from 'lucide-react';
 import { createTaskSchema, type CreateTaskInput } from '@taskflow/shared';
 import {
   Button,
@@ -20,9 +20,13 @@ import { useTasksStore } from '@/stores/tasks-store';
 import { tasksApi } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 
-export function AddTaskButton() {
+interface AddTaskButtonProps {
+  onTaskCreated: () => void;
+}
+
+export function AddTaskButton({ onTaskCreated }: AddTaskButtonProps) {
   const token = useAuthStore((s) => s.token);
-  const { projects, addTask } = useTasksStore();
+  const projects = useTasksStore((s) => s.projects);
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,13 +54,13 @@ export function AddTaskButton() {
       const response = await tasksApi.create(token, data);
       
       if (response.success && response.data) {
-        addTask(response.data as any);
         toast({
           title: 'Tarefa criada!',
           description: data.title,
         });
         reset();
         setOpen(false);
+        onTaskCreated();
       } else {
         toast({
           variant: 'destructive',
@@ -64,7 +68,8 @@ export function AddTaskButton() {
           description: response.error?.message || 'Erro ao criar tarefa',
         });
       }
-    } catch {
+    } catch (error) {
+      console.error('Error creating task:', error);
       toast({
         variant: 'destructive',
         title: 'Erro',

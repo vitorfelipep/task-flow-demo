@@ -297,14 +297,19 @@ export class TasksController {
         },
       });
 
-      res.status(201).json({
+      console.log('[TasksController.create] Task created successfully:', task.id);
+
+      const response = {
         success: true,
         data: {
           ...task,
           labels: task.labels.map((tl) => tl.label),
         },
-      });
+      };
+
+      res.status(201).json(response);
     } catch (error) {
+      console.error('[TasksController.create] Error:', error);
       next(error);
     }
   }
@@ -350,7 +355,8 @@ export class TasksController {
           description: data.description,
           priority: data.priority,
           status: data.status,
-          dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+          dueDate: data.dueDate === undefined ? undefined :
+                   data.dueDate === null ? null : new Date(data.dueDate),
           dueTime: data.dueTime,
           order: data.order,
           projectId: data.projectId,

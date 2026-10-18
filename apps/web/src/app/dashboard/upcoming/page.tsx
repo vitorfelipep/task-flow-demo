@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useTasksStore } from '@/stores/tasks-store';
@@ -11,6 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import type { Task } from '@taskflow/shared';
 
 export default function UpcomingPage() {
+  const [reloadVersion, setReloadVersion] = useState(0);
   const token = useAuthStore((s) => s.token);
   const { tasks, setTasks, setLoading, setCurrentView, isLoading } = useTasksStore();
 
@@ -21,26 +22,34 @@ export default function UpcomingPage() {
   useEffect(() => {
     if (!token) return;
 
+    let cancelled = false;
+
     const loadTasks = async () => {
       setLoading(true);
       try {
         const response = await tasksApi.upcoming(token);
+        if (cancelled) return;
+        if (!response.success) throw new Error(response.error?.message);
         if (response.success) {
           setTasks((response.data as Task[]) || []);
         }
       } catch {
+        if (cancelled) return;
         toast({
           variant: 'destructive',
           title: 'Erro',
           description: 'Erro ao carregar tarefas',
         });
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     loadTasks();
-  }, [token, setTasks, setLoading]);
+    return () => {
+      cancelled = true;
+    };
+  }, [token, setTasks, setLoading, reloadVersion]);
 
   const pendingTasks = tasks.filter((t) => t.status === 'pending');
 
@@ -57,7 +66,7 @@ export default function UpcomingPage() {
         </div>
       </div>
 
-      <AddTaskButton />
+      <AddTaskButton onTaskCreated={() => setReloadVersion((version) => version + 1)} />
 
       <div className="mt-6">
         <TaskList tasks={pendingTasks} isLoading={isLoading} />

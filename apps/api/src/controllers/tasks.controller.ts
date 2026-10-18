@@ -355,7 +355,8 @@ export class TasksController {
           description: data.description,
           priority: data.priority,
           status: data.status,
-          dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+          dueDate: data.dueDate === undefined ? undefined :
+                   data.dueDate === null ? null : new Date(data.dueDate),
           dueTime: data.dueTime,
           order: data.order,
           projectId: data.projectId,
@@ -491,10 +492,6 @@ export class TasksController {
       });
     } catch (error) {
       next(error);
-    }
-  }
-}
-error);
     }
   }
 }

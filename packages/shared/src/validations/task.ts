@@ -42,6 +42,11 @@ export const createTaskSchema = z.object({
 });
 
 export const updateTaskSchema = createTaskSchema.partial().extend({
+  // PATCH: omitted fields stay unchanged; empty strings and null clear values.
+  description: z.string().max(5000, 'Descrição muito longa')
+    .transform((value) => value === '' ? null : value).nullable().optional(),
+  dueDate: dateSchema.transform((value) => value ?? null).nullable().optional(),
+  dueTime: timeSchema.transform((value) => value ?? null).nullable().optional(),
   status: taskStatusSchema.optional(),
   order: z.number().int().nonnegative().optional(),
 });
